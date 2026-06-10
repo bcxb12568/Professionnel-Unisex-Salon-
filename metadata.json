@@ -1,0 +1,6 @@
+{
+  "name": "Professionnel Unisex Salon",
+  "description": "Premium unisex hair, skin, and styling service salon in Dadar, Mumbai with catalog booking and online product shop.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

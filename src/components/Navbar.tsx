@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Menu, X, Phone, ShoppingBag, Calendar, Scissors } from 'lucide-react';
+import { Menu, X, Phone, ShoppingBag, Calendar, Scissors, Mail, MapPin } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 interface NavbarProps {
   currentPage: string;
@@ -27,157 +28,184 @@ export default function Navbar({ currentPage, setCurrentPage, cartCount, openCar
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <div 
-            onClick={() => setCurrentPage('home')} 
-            className="flex items-center gap-2 cursor-pointer group"
+            onClick={() => {
+              setCurrentPage('home');
+              setIsOpen(false);
+            }} 
+            className="flex items-center gap-2.5 cursor-pointer group select-none"
             id="nav-logo-container"
           >
-            <div className="bg-pink-50 p-2 rounded-lg border border-pink-100 group-hover:border-pink-300 transition-all">
+            <div className="bg-pink-50 p-2 rounded-xl border border-pink-100 group-hover:bg-pink-100 group-hover:border-pink-200 transition-all">
               <Scissors className="h-6 w-6 text-pink-500 group-hover:rotate-12 transition-transform duration-300" />
             </div>
             <div>
-              <span className="font-sans font-bold text-base tracking-tight text-stone-900 block leading-tight">
-                Professionnel <span className="text-pink-600 font-extrabold block sm:inline">Unisex Salon</span>
+              <span className="font-sans font-bold text-base sm:text-lg tracking-tight text-stone-900 block leading-tight">
+                Professionnel <span className="text-pink-600 font-extrabold">Unisex Salon</span>
               </span>
-              <span className="text-[9px] font-mono tracking-widest text-pink-500 block -mt-1 uppercase font-bold">
-                Premium Salon • Dadar
+              <span className="text-[10px] font-mono tracking-widest text-[#caa0a0] block -mt-1 uppercase font-bold">
+                Premium Experiences • Dadar
               </span>
             </div>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-6" id="nav-desktop-menu">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                id={`nav-item-${item.id}`}
-                onClick={() => {
-                  setCurrentPage(item.id);
-                  setIsOpen(false);
-                }}
-                className={`text-sm font-semibold transition-all relative py-2 ${
-                  currentPage === item.id 
-                    ? 'text-pink-600 font-bold' 
-                    : 'text-stone-600 hover:text-pink-600'
-                }`}
-              >
-                {item.label}
-                {currentPage === item.id && (
-                  <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-pink-500 rounded-full" />
-                )}
-              </button>
-            ))}
-          </div>
-
-          {/* Utility Buttons */}
-          <div className="hidden lg:flex items-center gap-4" id="nav-utility-container">
-            {/* Click to Call */}
-            <a 
-              href="tel:+919322964354"
-              className="flex items-center gap-2 text-stone-600 hover:text-pink-600 transition-colors text-sm font-semibold"
-              id="call-us-link"
-            >
-              <div className="bg-pink-50 p-2 rounded-full border border-pink-100">
-                <Phone className="h-4 w-4 text-pink-600" />
-              </div>
-              <span>+91 93229 64354</span>
-            </a>
-
-            {/* Cart Button */}
+          {/* Minimal Top Header Action Corner */}
+          <div className="flex items-center gap-2.5 sm:gap-4" id="nav-action-corner">
+            {/* Elegant Cart Button always accessible */}
             <button
               onClick={openCart}
-              className="relative p-2 text-stone-600 hover:text-pink-600 transition-colors"
+              className="relative p-2 text-stone-600 hover:text-pink-600 hover:bg-pink-50/50 rounded-full border border-transparent hover:border-pink-100 transition-all cursor-pointer"
               id="open-cart-btn"
+              title="View Cart"
             >
-              <div className="bg-pink-50 p-2 rounded-full border border-pink-100">
-                <ShoppingBag className="h-4 w-4 text-stone-800" />
+              <div className="relative">
+                <ShoppingBag className="h-5.5 w-5.5 text-stone-800" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 bg-pink-500 text-white text-[10px] font-black font-mono h-4.5 w-4.5 rounded-full flex items-center justify-center shadow-sm animate-pulse">
+                    {cartCount}
+                  </span>
+                )}
               </div>
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-xs font-bold font-mono h-5 w-5 rounded-full flex items-center justify-center animate-bounce">
-                  {cartCount}
-                </span>
-              )}
             </button>
 
-            {/* Primary Booking Button */}
+            {/* Premium Three-Line Hamburger Button */}
             <button
-              onClick={() => setCurrentPage('book')}
-              className="px-5 py-2.5 bg-pink-500 text-white font-bold text-sm rounded-lg hover:bg-pink-600 transition-all flex items-center gap-2 shadow-md hover:shadow-pink-500/15 cursor-pointer"
-              id="book-appointment-navbar-btn"
+              onClick={() => setIsOpen(true)}
+              className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 bg-pink-50 hover:bg-pink-100 border border-pink-100/60 rounded-full text-stone-800 hover:text-pink-600 font-bold text-xs sm:text-sm cursor-pointer transition-all active:scale-95"
+              id="navbar-hamburger-trigger"
+              aria-label="Open Navigation Directory"
             >
-              <Calendar className="h-4 w-4" />
-              Book Now
-            </button>
-          </div>
-
-          {/* Mobile Buttons */}
-          <div className="flex lg:hidden items-center gap-3" id="nav-mobile-controls">
-            {/* Mobile Call */}
-            <a 
-              href="tel:+919322964354"
-              className="p-2.5 text-pink-600 bg-pink-50 border border-pink-100 rounded-lg shrink-0 min-h-[44px] flex items-center justify-center"
-            >
-              <Phone className="h-5 w-5" />
-            </a>
-
-            {/* Mobile Cart */}
-            <button
-              onClick={openCart}
-              className="relative p-2.5 text-[#fff] bg-pink-50 border border-pink-100 rounded-lg shrink-0 min-h-[44px] flex items-center justify-center"
-            >
-              <ShoppingBag className="h-5 w-5 text-stone-800" />
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-[10px] font-bold h-4.5 w-4.5 rounded-full flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
-            </button>
-
-            {/* Hamburger Toggle */}
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="p-2.5 text-stone-700 bg-pink-50 border border-pink-100 rounded-lg hover:text-pink-650 min-h-[44px] flex items-center justify-center"
-              id="mobile-menu-toggle"
-            >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              <Menu className="h-4.5 w-4.5 text-pink-600" />
+              <span>Menu</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Drawer menu */}
-      {isOpen && (
-        <div className="lg:hidden border-t border-pink-150 bg-white px-4 pt-2 pb-6 space-y-2 animate-fade-in" id="nav-mobile-menu">
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => {
-                setCurrentPage(item.id);
-                setIsOpen(false);
-              }}
-              className={`block w-full text-left px-5 py-3 rounded-lg text-sm font-semibold transition-colors ${
-                currentPage === item.id 
-                  ? 'bg-pink-500/10 text-pink-600 border-l-4 border-pink-500' 
-                  : 'text-stone-700 hover:bg-pink-50/50'
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
-          <div className="pt-4 border-t border-pink-50">
-            <button
-              onClick={() => {
-                setCurrentPage('book');
-                setIsOpen(false);
-              }}
-              className="w-full text-center py-3 bg-pink-500 text-white font-bold rounded-lg flex items-center justify-center gap-2 min-h-[44px]"
-              id="mobile-book-now-btn"
-            >
-              <Calendar className="h-5 w-5" />
-              Book Appointment Now
-            </button>
+      {/* Slide-out Menu Overlay & Drawer using motion */}
+      <AnimatePresence>
+        {isOpen && (
+          <div className="fixed inset-0 z-50 overflow-hidden" id="navigation-drawer-portal">
+            {/* Soft Backdrop Blur */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsOpen(false)}
+              className="absolute inset-0 bg-stone-900/35 backdrop-blur-sm"
+            />
+
+            {/* Sliding Drawer Container */}
+            <div className="absolute inset-y-0 right-0 max-w-full flex">
+              <motion.div
+                initial={{ x: '100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '100%' }}
+                transition={{ type: 'spring', damping: 26, stiffness: 220 }}
+                className="w-screen max-w-md bg-white shadow-2xl flex flex-col justify-between"
+              >
+                {/* Header inside drawer */}
+                <div className="px-6 py-6 border-b border-pink-50/80 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Scissors className="h-5 w-5 text-pink-500" />
+                    <span className="font-serif italic font-semibold text-lg text-stone-900">
+                      Explore Directory
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="h-10 w-10 border border-pink-100 bg-pink-50/20 hover:bg-pink-50 hover:text-pink-600 rounded-full flex items-center justify-center transition-all cursor-pointer focus:outline-none"
+                    aria-label="Close menu"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+
+                {/* Directory Navigation Links (Highly Readable List) */}
+                <div className="flex-1 overflow-y-auto py-6 px-6 space-y-2">
+                  <span className="text-[10px] font-mono tracking-widest text-[#caa0a0] uppercase font-bold block mb-4">
+                    Main Directory Pages
+                  </span>
+                  <div className="space-y-1">
+                    {navItems.map((item, idx) => {
+                      const isActive = currentPage === item.id;
+                      return (
+                        <motion.button
+                          key={item.id}
+                          onClick={() => {
+                            setCurrentPage(item.id);
+                            setIsOpen(false);
+                          }}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: idx * 0.04 }}
+                          className={`w-full text-left px-5 py-3.5 rounded-xl text-base font-bold transition-all flex items-center justify-between cursor-pointer ${
+                            isActive
+                              ? 'bg-pink-500 text-white shadow-md shadow-pink-550/10'
+                              : 'text-stone-700 hover:bg-pink-50/40 hover:text-pink-600'
+                          }`}
+                        >
+                          <span>{item.label}</span>
+                          <span className={`${isActive ? 'text-white' : 'text-stone-300'}`}>•</span>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Info & Call-To-Action Block inside the drawer */}
+                <div className="p-6 bg-pink-50/30 border-t border-pink-50 space-y-5">
+                  <div className="space-y-3">
+                    <span className="text-[10px] font-mono tracking-widest text-pink-605 text-pink-500 uppercase font-black block">
+                      Reservations & Assistance
+                    </span>
+
+                    {/* Clean Contact Row */}
+                    <a 
+                      href="tel:+919322964354"
+                      className="flex items-center gap-3 p-3 bg-white border border-pink-100 rounded-xl hover:border-pink-300 transition-colors cursor-pointer group"
+                    >
+                      <div className="bg-pink-50 p-2 rounded-lg text-pink-600 group-hover:scale-105 transition-transform">
+                        <Phone className="h-4.5 w-4.5" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-stone-400 block font-semibold leading-tight">Instant Hot-Line</span>
+                        <span className="text-sm font-bold text-stone-850 group-hover:text-pink-600">+91 93229 64354</span>
+                      </div>
+                    </a>
+
+                    {/* Salon Location Details */}
+                    <div className="flex items-start gap-3 p-3 bg-white border border-pink-50 rounded-xl">
+                      <div className="bg-pink-50 p-2 rounded-lg text-pink-500 shrink-0">
+                        <MapPin className="h-4.5 w-4.5" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-stone-400 block font-semibold leading-tight">Our Atelier</span>
+                        <span className="text-xs font-semibold text-stone-700 leading-snug">
+                          Dadar East, Near Railway Station, Mumbai, India
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Primary CTA Appointment Booking */}
+                  <button
+                    onClick={() => {
+                      setCurrentPage('book');
+                      setIsOpen(false);
+                    }}
+                    className="w-full py-4 bg-pink-500 hover:bg-pink-600 text-white font-extrabold text-sm rounded-xl flex items-center justify-center gap-2.5 shadow-lg hover:shadow-pink-500/20 active:scale-98 transition-all cursor-pointer min-h-[48px]"
+                    id="drawer-book-now-cta"
+                  >
+                    <Calendar className="h-4.5 w-4.5" />
+                    Book Bespoke Appointment
+                  </button>
+                </div>
+              </motion.div>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </nav>
   );
 }
+
